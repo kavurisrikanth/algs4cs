@@ -1,43 +1,157 @@
-import java.util.Random;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import edu.princeton.cs.algs4.StdRandom;
+import org.jetbrains.annotations.NotNull;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
+    // Class members.
     private Item[] arr;
     private int n, size;
 
-    // construct an empty randomized queue
+    /*****
+     * construct an empty randomized queue
+     */
     public RandomizedQueue() {
         n = 0;
         size = 0;
         arr = (Item[]) new Object[n + 1];
     }
 
-    // is the randomized queue empty?
+    /*****
+     * is the randomized queue empty?
+     * @return - true or false.
+     */
     public boolean isEmpty() {
         return size == 0;
     }
 
-    // return the number of items on the randomized queue
+    /*****
+     * return the number of items on the randomized queue
+     * @return - Size of queue.
+     */
     public int size() {
         return size;
     }
 
-    // add the item
+    /*****
+     * add the item
+     * @param item - Item to be added.
+     */
     public void enqueue(Item item) {
+        if (item == null)
+            throw new IllegalArgumentException("Can't insert null.");
+
+        if (size == arr.length)
+            resize(false);
+
+        size++;
         arr[n++] = item;
     }
 
-    // remove and return a random item
+    /*****
+     * remove and return a random item
+     * @return - Item to be deleted.
+     */
     public Item dequeue() {
-        Random rand = new Random();
-        
+        if (isEmpty())
+            throw new NoSuchElementException("Queue is empty.");
+
+        if (size <= arr.length/4)
+            resize(true);
+
+        int index = 0;
+        Item ans;
+        do {
+            index = StdRandom.uniform(n);
+            ans = arr[index];
+        } while (ans == null);
+
+        arr[index] = null;
+        size--;
+        return ans;
     }
 
-    // return a random item (but do not remove it)
-    public Item sample() {}
+    /*****
+     * Resize the array.
+     * @param shrink - Size up or down?
+     */
+    private void resize(boolean shrink) {
+        Item[] newArr = (Item[]) new Object[shrink ? n/2 : n*2];
+        int i = 0;
+        for (int j = 0; j < arr.length; j++) {
+            if (arr[j] != null)
+                newArr[i++] = arr[j];
+        }
+        arr = newArr;
+        n = i;
+    }
 
-    // return an independent iterator over items in random order
-    public Iterator<Item> iterator() {}
+    /*****
+     * return a random item (but do not remove it)
+     * @return - Item to be returned.
+     */
+    public Item sample() {
+        if (isEmpty())
+            throw new NoSuchElementException("Queue is empty.");
+
+        int remIndex = StdRandom.uniform(n);
+        return arr[remIndex];
+    }
+
+    /*****
+     * Iterator class for this queue.
+     */
+    private class RandomizedQueueIterator implements Iterator<Item> {
+        private Item[] shuffledArray;
+        private int current = 0;
+
+        /*****
+         * Constructor.
+         */
+        public RandomizedQueueIterator() {
+            shuffledArray = (Item[]) new Object[arr.length];
+            StdRandom.shuffle(shuffledArray);
+        }
+
+        /*****
+         * Check if there are more elements.
+         * @return - true or false.
+         */
+        @Override
+        public boolean hasNext() {
+            return current != n;
+        }
+
+        /*****
+         * Get the next item.
+         * @return - Next item.
+         */
+        @Override
+        public Item next() {
+            if (!hasNext())
+                throw new NoSuchElementException("No more elements.");
+
+            return shuffledArray[current++];
+        }
+
+        /*****
+         * remove an element. Not supported.
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Remove operation is not supported.");
+        }
+    }
+
+    /*****
+     * return an independent iterator over items in random order
+     * @return - Iterator.
+     */
+    @NotNull
+    public Iterator<Item> iterator() {
+        return new RandomizedQueueIterator();
+    }
 
     // unit testing (optional)
 //    public static void main(String[] args)
