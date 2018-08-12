@@ -1,4 +1,3 @@
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -57,6 +56,9 @@ public class Deque<Item> implements Iterable<Item> {
         head.next = oldhead;
         if (oldhead != null)
             oldhead.prev = head;
+        if (tail == null)
+            tail = head;
+        size++;
     }
 
     /*****
@@ -71,7 +73,10 @@ public class Deque<Item> implements Iterable<Item> {
         tail = new Node(item);
         tail.prev = oldtail;
         if (oldtail != null)
-            oldtail.next = head;
+            oldtail.next = tail;
+        if (head == null)
+            head = tail;
+        size++;
     }
 
     /*****
@@ -84,6 +89,11 @@ public class Deque<Item> implements Iterable<Item> {
 
         Item ans = head.value;
         head = head.next;
+        size--;
+        if (isEmpty()) {
+            head = null;
+            tail = null;
+        }
         return ans;
     }
 
@@ -97,6 +107,11 @@ public class Deque<Item> implements Iterable<Item> {
 
         Item ans = tail.value;
         tail = tail.prev;
+        size--;
+        if (isEmpty()) {
+            head = null;
+            tail = null;
+        }
         return ans;
     }
 
@@ -108,7 +123,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         @Override
         public boolean hasNext() {
-            return head != null;
+            return current != null;
         }
 
         @Override
@@ -131,9 +146,9 @@ public class Deque<Item> implements Iterable<Item> {
      * Get iterator for deque.
      * @return - Iterator for deque.
      */
-    @NotNull
     @Override
     public Iterator<Item> iterator() {
         return new DequeIterator();
     }
+
 }

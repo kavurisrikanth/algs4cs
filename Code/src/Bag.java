@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Iterator;
 
 public class Bag<Item> implements Iterable<Item> {
@@ -30,7 +28,6 @@ public class Bag<Item> implements Iterable<Item> {
      * Get an iterator for the Bag.
      * @return - Bag iterator.
      */
-    @NotNull
     @Override
     public Iterator<Item> iterator() {
         return bag.iterator();

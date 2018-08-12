@@ -1,13 +1,13 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 import edu.princeton.cs.algs4.StdRandom;
-import org.jetbrains.annotations.NotNull;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // Class members.
     private Item[] arr;
-    private int n, size;
+    private int n, size, numNulls;
 
     /*****
      * construct an empty randomized queue
@@ -15,6 +15,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public RandomizedQueue() {
         n = 0;
         size = 0;
+        numNulls = 0;
         arr = (Item[]) new Object[n + 1];
     }
 
@@ -45,8 +46,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (size == arr.length)
             resize(false);
 
-        size++;
         arr[n++] = item;
+        size++;
     }
 
     /*****
@@ -57,9 +58,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty())
             throw new NoSuchElementException("Queue is empty.");
 
-        if (size <= arr.length/4)
-            resize(true);
-
         int index = 0;
         Item ans;
         do {
@@ -68,7 +66,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         } while (ans == null);
 
         arr[index] = null;
+        numNulls++;
         size--;
+
+        if (numNulls >= size)
+            resize(true);
+
         return ans;
     }
 
@@ -77,7 +80,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @param shrink - Size up or down?
      */
     private void resize(boolean shrink) {
-        Item[] newArr = (Item[]) new Object[shrink ? n/2 : n*2];
+        int newSize = shrink ? n/2 : n*2;
+        if (newSize == 0) {
+            n = 0;
+            return;
+        }
+
+        Item[] newArr = (Item[]) new Object[newSize];
         int i = 0;
         for (int j = 0; j < arr.length; j++) {
             if (arr[j] != null)
@@ -85,6 +94,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
         arr = newArr;
         n = i;
+        numNulls = 0;
     }
 
     /*****
@@ -148,7 +158,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * return an independent iterator over items in random order
      * @return - Iterator.
      */
-    @NotNull
     public Iterator<Item> iterator() {
         return new RandomizedQueueIterator();
     }

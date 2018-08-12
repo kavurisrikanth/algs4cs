@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -61,7 +59,6 @@ public class Stack<Item> implements Iterable<Item> {
         }
     }
 
-    @NotNull
     public Iterator<Item> iterator() {
         return new StackIterator();
     }
