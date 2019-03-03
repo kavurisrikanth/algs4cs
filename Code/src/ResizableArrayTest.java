@@ -44,6 +44,26 @@ class ResizableArrayTest {
         System.out.println(arr);
         for (int i = 0; i < 10; i++)
             assertEquals(i, arr.removeFrom(0));
+
+        for (int i = 9; i >= 0; i--)
+            arr.push(i);
+        System.out.println(arr);
+        for (int i = 9; i >= 0; i--)
+            assertEquals(i, arr.removeFrom(0));
+    }
+
+    @Test
+    public void testExchange() {
+        for (int i = 0; i < 10; i++)
+            arr.push(i);
+        System.out.println(arr);
+
+        arr.exch(0, 1);
+        assertEquals(1, arr.viewItemAt(0));
+        assertEquals(0, arr.viewItemAt(1));
+        for (int i = 2; i < arr.length(); i++) {
+            assertEquals(i, arr.viewItemAt(i));
+        }
     }
 
     @AfterEach

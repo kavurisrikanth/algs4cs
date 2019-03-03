@@ -37,7 +37,7 @@ public class ResizableArray <Item> {
      */
     public void insertAt(int index, Item item) {
         // Basic index range validation.
-        if (index > filled || index < 0 || index > n)
+        if (invalidIndex(index))
             throw new IndexOutOfBoundsException("Invalid index: " + index);
 
         if (filled >= n/2)
@@ -60,7 +60,7 @@ public class ResizableArray <Item> {
      */
     public Item removeFrom(int index) {
         // Basic index range validation.
-        if (index > filled || index < 0 || index > n)
+        if (invalidIndex(index))
             throw new IndexOutOfBoundsException("Invalid index: " + index);
 
         // Get the item
@@ -87,7 +87,7 @@ public class ResizableArray <Item> {
      */
     public Item viewItemAt(int index) {
         // Basic index range validation.
-        if (index > filled || index < 0 || index > n)
+        if (invalidIndex(index))
             throw new IndexOutOfBoundsException("Invalid index: " + index);
 
         return arr[index];
@@ -139,6 +139,32 @@ public class ResizableArray <Item> {
      */
     public boolean isEmpty() {
         return filled == 0;
+    }
+
+    /**
+     * Exchange two items.
+     * @param one - First index
+     * @param two - Second index
+     */
+    public void exch(int one, int two) {
+        if (invalidIndex(one))
+            throw new IndexOutOfBoundsException("Invalid index: " + one);
+
+        if (invalidIndex(two))
+            throw new IndexOutOfBoundsException("Invalid index: " + two);
+
+        Item temp = arr[one];
+        arr[one] = arr[two];
+        arr[two] = temp;
+    }
+
+    /**
+     * Check if the index is invalid.
+     * @param index - The index.
+     * @return - true or false.
+     */
+    private boolean invalidIndex(int index) {
+        return index > filled || index < 0 || index > n;
     }
 
     /**
